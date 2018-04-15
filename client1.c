@@ -14,22 +14,21 @@
 
 struct play
 {
-	intx,y;
+	char x,y;
 	char *c;
 };
 
 int main(int argc, char *argv[]){
     int			sock_send;
     struct sockaddr_in	addr_send;
-    char			text[2],buf[BUF_SIZE];
+    char			text[3],buf[BUF_SIZE];
     int			send_len,bytes_sent;
-    
-    int x,y;
-    char ltr;
+
+    char x,y,ltr;
         /* create socket for sending data */
-        
+
     struct play p;
-    
+
     sock_send=socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
     if (sock_send < 0){
         printf("socket() failed\n");
@@ -43,12 +42,16 @@ int main(int argc, char *argv[]){
     addr_send.sin_port = htons((unsigned short)SERVER_PORT);
 
     while(1){
-    	printf("enter the coordinates and letter to play:\n");
-        printf("player 1: ");
-        scanf("%d,%d,%s",p.x,p.y,p.c);
+        printf("enter the coordinates and letter to play:\n");
+				printf("if you want to quit enter 'q'");
+        for (int z = 0; z < 3; ++z)
+        {
+            scanf("%s",&text[z]);
+            break;
+        }
+
         if (strcmp(text,"q") == 0)
             break;
-	if 
         strcpy(buf,text);
         send_len=strlen(text);
         bytes_sent=sendto(sock_send, buf, send_len, 0,(struct sockaddr *) &addr_send, sizeof(addr_send));
@@ -56,4 +59,3 @@ int main(int argc, char *argv[]){
 
     close(sock_send);
 }
-

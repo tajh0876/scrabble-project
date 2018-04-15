@@ -69,84 +69,9 @@ void makePlay(int x, int y, char* c){
    grid[x-1][y-1]=c;
    return;
 }
-//getPlayerMove Function
-void getPlayerMove()
-{
-	char *choice,opt[1];
-	int x,y,a,r,s; // coordinates
-	struct play p;
-	char buf[BUF_SIZE];
 
-	printf("Play [p] or Quit [q]\n");
-	scanf("%s",opt);
-  printf("tick");
-
-	if (strcmp(opt,"q")==0)
-	{
-	  printf("proceeding with Play\n");
-		// implement function to further play
-		for(int g=0;g<3;g++)
-		{
-			if(g==0)
-			{
-				choice[0]=buf[g];
-				//strcpy(holdx,p.x);
-				//xcoord[1]='\0':
-				choice[1]='\0';
-				p.x=atoi(&choice[0]);
-				//p.x=atoi(&buf[g]); format before change above
-				//xcoord=p.x;
-				printf("%c\n",p.x);
-			}
-
-			else if(g==1)
-			{
-				choice[1]=buf[g];
-				//strcpy(holdx,p.y);
-				//ycoord[1]='\0';
-				p.y=atoi(&choice[1]);
-				printf("%c\n",p.y);
-			}
-
-			else if(g==2)
-			{
-				p.c=&buf[g];
-				printf("%c",*p.c);
-				buf[3]='\0';
-			}
-			//p.c=atol(&buf[2]);
-			makePlay(p.x,p.y,p.c);// two integers  'xy' that specifies play
-			drawBoard();
-			break;
-    }//close for loop
-  }//close if
-  else if (strcmp(opt,"q")==0)
-  {
-    printf("exiting the game, goodbye\n");
-    exit(0);
-  }
-
-  return;
-				// this involves getting the coordinates of the play using a function sir implemented
-}
-//calculateScore Function
-//isOnBoard Function
-int isOnBoard(int x,int y)
-{
-	int t=1,f=0;
-	if(x > 0 && x < NUM_RANGE && y > 0 && y < NUM_RANGE)
-	{
-		return t;
-	}
-	else
-	{
-		return f;
-	}
-
-}
-//StartBoard Function
 //server function
-void server()
+int server()
 {
     int			sock_recv;
     struct sockaddr_in	my_addr;
@@ -156,9 +81,13 @@ void server()
     int			incoming_len;
     struct sockaddr_in	remote_addr;
     int			recv_msg_size;
-    char			buf[BUF_SIZE];
+    char		buf[BUF_SIZE];
     int			select_ret;
-
+		char *choice;
+		int opt;
+		struct play p;
+		char lplay[1],*ltr;
+		int xcoord=1,ycoord=1;
 
             /* create socket for receiving */
     sock_recv=socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
@@ -185,42 +114,148 @@ void server()
         select_ret=select(sock_recv+1,&readfds,NULL,NULL,NULL);
         /*select_ret=select(sock_recv+1,&readfds,NULL,NULL,&timeout);*/
         if (select_ret > 0){		/* anything arrive on any socket? */
-            /*puts("I received something");*/
-            incoming_len=sizeof(remote_addr);	/* who sent to us? */
-            recv_msg_size=recvfrom(sock_recv,buf,BUF_SIZE,0,(struct sockaddr *)&remote_addr,&incoming_len);
-           /*puts("After receiving...");*/
-            if (recv_msg_size > 0){	/* what was sent? */
-                buf[recv_msg_size]='\0';
-              /*puts("After receiving2...");*/
-                printf("From %s received: %s\n",inet_ntoa(remote_addr.sin_addr),buf);
-                /*printf("From  received:%s \n",buf);*/
-                 /*puts("After receiving3...");*/
-                getPlayerMove();
-             }
-            }
+        /*puts("I received something");*/
+        incoming_len=sizeof(remote_addr);	/* who sent to us? */
+        recv_msg_size=recvfrom(sock_recv,buf,BUF_SIZE,0,(struct sockaddr *)&remote_addr,&incoming_len);
+       /*puts("After receiving...");*/
+        if (recv_msg_size > 0){	/* what was sent? */
+            buf[recv_msg_size]='\0';
+          /*puts("After receiving2...");*/
+            printf("From %s received: %s\n",inet_ntoa(remote_addr.sin_addr),buf);
+            /*printf("From  received:%s \n",buf);*/
+             /*puts("After receiving3...");*/
+						 for(int g=0;g<3;g++)
+						 {
+							 if (g==0)
+							 {
+								 choice[0]=buf[g];
+								 choice[1]='\0';//delimiter
+								 xcoord=atoi(&choice[0]);
 
+							 }
+							 else if (g==1)
+							 {
+								 choice[1]=buf[g];
+								 ycoord=atoi(&choice[1]);
+
+
+							 }
+							 else if(g==2)
+							 {
+								 buf[3]='\0'; //delimiter
+								 choice[2]=buf[g];
+								 lplay[0]=choice[2];
+								 lplay[1]='\0';
+							//	 *ltr=lplay[0];
+								 makePlay(xcoord,ycoord,"l");
+							 }
+
+						 }
+						 //getNewBoard();
+						 drawBoard();
+					 }
         if (strcmp(buf,"quit") == 0)
             break;
 
     }
 
-    close(sock_recv);
+	}
+} // close server function
+
+//getPlayerMove Function
+// void getPlayerMove()
+// {
+// 	char *choice;
+// 	int opt;
+// 	struct play p;
+// 	char buf[BUF_SIZE];
+//
+// 	printf("Play [1] or Quit [2] \n");
+// 	// server();
+// 	// scanf("%d",&opt);
+//
+// 	// if (opt==1)
+// 	// {
+// 	//   printf("proceeding with Play\n");
+// 	// 	// implement function to further play
+// 	// 	for(int g=0;g<3;g++)
+// 	// 	{
+// 	// 		if(g==0)
+// 	// 		{
+// 	// 			printf("one");
+// 	// 			choice[0]=buf[g];
+// 	// 			choice[1]='\0';
+// 	// 			p.x=atoi(&choice[0]);
+// 	// 			printf("%c\n",p.x);
+// 	// 		}
+// 	//
+// 	// 		else if(g==1)
+// 	// 		{
+// 	// 			printf("2");
+// 	// 			choice[1]=buf[g];
+// 	// 			p.y=atoi(&choice[1]);
+// 	// 			printf("%c\n",p.y);
+// 	// 		}
+// 	//
+// 	// 		else if(g==2)
+// 	// 		{
+// 	// 			printf("3");
+// 	// 			p.c=&buf[g];
+// 	// 			printf("%c",*p.c);
+// 	// 			buf[3]='\0';
+// 	// 		}
+// 	// 		printf("done making play\n");
+// 	// 		//makePlay(p.x,p.y,p.c);// two integers  'xy' that specifies play
+// 	// 		getNewBoard();
+// 	// 		drawBoard();
+// 	// 		break;
+//   //   }//close for loop
+//   // }//close if
+//   // else if (opt==2)
+//   // {
+//   //   printf("exiting the game, goodbye\n");
+//   //   exit(0);
+//   // }
+//
+//   return;
+// 				// this involves getting the coordinates of the play using a function sir implemented
+// }
+//calculateScore Function
+//isOnBoard Function
+int isOnBoard(int x,int y)
+{
+	int t=1,f=0;
+	if(x > 0 && x < NUM_RANGE && y > 0 && y < NUM_RANGE)
+	{
+		return t;
+	}
+	else
+	{
+		return f;
+	}
+
 }
+//StartBoard Function
 
 
 // GAMEPLAY STARTS HERE IN MAIN
-    getNewBoard();
-    //Displaying empty board
-    printf("\n%s\n\n","Printing an empty board....");
-    drawBoard();
-    //making two plays
-    makePlay(3,7,"a");
-    makePlay(4,5,"b");
-    printf("\n%s\n\n","RePrinting board after plays....");
-    //redrawing the board with plays shown
-    drawBoard();
-    server();
-  //  getPlayerMove();
+//while(1)
+//{
+	getNewBoard();
+	//Displaying empty board
+	printf("\n%s\n\n","Printing an empty board....");
+	drawBoard();
+	//making two plays
+	makePlay(3,7,"a");
+	makePlay(4,5,"b");
+	//getPlayerMove();
+	printf("\n%s\n\n","RePrinting board after plays....");
+	//redrawing the board with plays shown
+	drawBoard();
+
+	server();
+	//getPlayerMove();
+//}
 
     return 0;
 }
