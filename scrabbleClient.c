@@ -21,8 +21,10 @@ struct play
 int main(int argc, char *argv[]){
     int			sock_send;
     struct sockaddr_in	addr_send;
-    char			text[3],buf[BUF_SIZE];
-    int			send_len,bytes_sent;
+    char			text[3], buf[BUF_SIZE];
+    int			send_len, bytes_sent;
+    
+    int z;
 
     char x,y,ltr;
         /* create socket for sending data */
@@ -41,21 +43,23 @@ int main(int argc, char *argv[]){
     addr_send.sin_addr.s_addr = inet_addr(SERVER_IP);
     addr_send.sin_port = htons((unsigned short)SERVER_PORT);
 
-    while(1){
-        printf("enter the coordinates and letter to play:\n");
-				printf("if you want to quit enter 'q'");
-        for (int z = 0; z < 3; ++z)
+    printf("Play [p] or Quit [q]\n");
+        for (z = 0; z < 3; ++z)
         {
             scanf("%s",&text[z]);
-            break;
+    
         }
-
-        if (strcmp(text,"q") == 0)
-            break;
-        strcpy(buf,text);
-        send_len=strlen(text);
-        bytes_sent=sendto(sock_send, buf, send_len, 0,(struct sockaddr *) &addr_send, sizeof(addr_send));
+        
+        while(text != "q" ){
+        
+            strcpy(buf,text);
+            send_len=strlen(text);
+            bytes_sent=sendto(sock_send, buf, send_len, 0,(struct sockaddr *) &addr_send, sizeof(addr_send));
+        
+            if (strcmp(text,"q") == 0)
+                break;
+        
         }
-
+        
     close(sock_send);
 }
