@@ -121,6 +121,7 @@ int main() {
         //reads message from client
         valread = read( new_socket , buffer, 1024);
         
+        int num1 = atoi(&buffer[0]);
         int num2 = atoi(&buffer[1]);
         letter = buffer[2];
         
@@ -128,7 +129,7 @@ int main() {
         
          //redrawing the board with plays shown
         drawBoard();
-        printf("%c, %c, %c\n", buffer[1], buffer[1], buffer[2]);
+        printf("%c, %c, %c\n", buffer[0], buffer[1], buffer[2]);
         
        
        
