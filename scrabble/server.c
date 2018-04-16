@@ -135,6 +135,7 @@ int main() {
        
     }
     
+    close(new_socket);
 }
 
  
