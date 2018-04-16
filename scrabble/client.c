@@ -37,17 +37,19 @@ int main(int argc, char const *argv[])
         printf("\nConnection Failed \n");
         exit(1);
     }
+    while(1){
+    
+        //reads message from server
+        valread = read( sock , buffer, 1024);
+        printf("%s\n",buffer );
+    
+        scanf("%s", response);
     
     
-    //reads message from server
-    valread = read( sock , buffer, 1024);
-    printf("%s\n",buffer );
+        //sends message to server
+        send(sock , response , strlen(response) , 0 );
     
-    scanf("%s", response);
+    close(sock);
     
-    //sends message to server
-    send(sock , response , strlen(response) , 0 );
-    
-    
-    return 0;
+    }
 }
