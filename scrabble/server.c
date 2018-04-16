@@ -121,14 +121,14 @@ int main() {
         //reads message from client
         valread = read( new_socket , buffer, 1024);
         
+        int num2 = atoi(&buffer[1]);
+        letter = buffer[2];
         
-        makePlay( 1, 5, buffer);
+        makePlay(num2, num2, &letter);
         
          //redrawing the board with plays shown
         drawBoard();
-        printf("%s\n", buffer);
-        
-        
+        printf("%c, %c, %c\n", buffer[1], buffer[1], buffer[2]);
         
        
        

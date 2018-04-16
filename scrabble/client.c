@@ -11,7 +11,7 @@ int main(int argc, char const *argv[])
     int sock = 0, valread;
     struct sockaddr_in address;
     struct sockaddr_in serv_addr;
-    char response[3];
+    char response[4];
     char buffer[1024] = {0};
 
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
@@ -44,8 +44,6 @@ int main(int argc, char const *argv[])
     printf("%s\n",buffer );
     
     scanf("%s", response);
-    
-   
     
     //sends message to server
     send(sock , response , strlen(response) , 0 );
