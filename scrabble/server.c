@@ -11,7 +11,7 @@
 int main() {
     int k,j;
     
-    int num1, num2;
+    int x, y;
     char  letter;
     
     int const NUM_RANGE=8;
@@ -67,9 +67,41 @@ int main() {
     struct sockaddr_in address;
     int opt = 1;
     int addrlen = sizeof(address);
-    char buffer[1024] = {0};
-    char * message = "Enter coordinates and letter to play or 'quit' to leave\n";
+    char buffer1[1024] = {0};
+    char buffer2[1024] = {0};
+    char * firstmessage = "Enter letter to play or 'quit' to leave\n";
+    char * secondmessage = "Enter coordinates to make your move\n";
+    char * errormessage = "Sorry, that move is not on the board\n";
+    char * endgamemessage = "Goodbye\n";
     
+    void getPlayerMove(){
+        //asks client for letter or to quit 
+        send(new_socket , firstmessage , strlen(firstmessage) , 0 );
+        //reads message from client
+        valread = read( new_socket , buffer1, 1024);
+        if (buffer1 == "quit"){
+            printf("Game ended");
+            //tells client goodbye
+            send(new_socket , endgamemessage , strlen(endgamemessage) , 0 );
+        } else {
+            // asks client for coordinates
+            send(new_socket , secondmessage , strlen(secondmessage) , 0 );
+            //reads message from client
+            valread = read( new_socket , buffer2, 1024);
+            return;
+        }
+    }
+    
+    int isOnBoard(int x, int y){
+        //checks if x is on the board
+        if (x > 0 && x < 9){
+            if (y > 0 && y < 8){
+            return 0;
+            }
+        } else {
+            return 1;
+        }
+    } 
       
     // Creating socket file descriptor
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0)
@@ -115,27 +147,33 @@ int main() {
         
         printf("\n%s\n\n","RePrinting board after plays....");
         
-        //sends message to client
-        send(new_socket , message , strlen(message) , 0 );
+        //gets player's coordinates and letter
+        getPlayerMove();
         
-        //reads message from client
-        valread = read( new_socket , buffer, 1024);
+        //x and y coordinates
+        int x = atoi(&buffer1[0]);
+        int y = atoi(&buffer1[1]);
         
-        int num1 = atoi(&buffer[0]);
-        int num2 = atoi(&buffer[1]);
-        letter = buffer[2];
+        //letter
+        letter = buffer2[0];
         
-        makePlay(num2, num2, &letter);
+        //If coordinates are on the board then makes the play
+        if (isOnBoard(x, y) == 1){
+            makePlay(x, y, &letter);    
+        } else {
+            // tells client that coordinates are wrong
+            send(new_socket , secondmessage , strlen(firstmessage) , 0 );
+        }
         
-         //redrawing the board with plays shown
+        //redrawing the board with plays shown
         drawBoard();
-        printf("%c, %c, %c\n", buffer[0], buffer[1], buffer[2]);
         
-       
+        
+        printf("%c, %c, %c\n", buffer1[0], buffer1[1], buffer2[0]);
        
     }
     
-    close(new_socket);
+    
 }
 
  
